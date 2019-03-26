@@ -26,24 +26,29 @@ public class MainActivity extends AppCompatActivity {
         sm = (SensorManager)getSystemService(SENSOR_SERVICE);
 
         myList = sm.getSensorList(Sensor.TYPE_LIGHT);
-        if(myList.size()>0){
-            sm.registerListener(sel, (Sensor) myList.get(0), SensorManager.SENSOR_DELAY_NORMAL);
-        }else{
-            tv.setText("Error: Light Sensor not found");
-        }
 
         final Button button = findViewById(R.id.theButton);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // sensor reading is stopped
                 if (sensorRunning){
+                    if(myList.size()>0){
+                        sm.unregisterListener(sel);
+                    }
                     button.setText("START");
                     sensorRunning = false;
-                    tv.setText("Now Stopped !!!");
+                    tv.setText("Sensor reading Stopped");
                 }
+                // sensor reading is started
                 else{
                     button.setText("STOP");
                     sensorRunning = true;
-                    tv.setText("Now Running !!!");
+                    if(myList.size()>0){
+                        sm.registerListener(sel, (Sensor) myList.get(0), SensorManager.SENSOR_DELAY_NORMAL);
+                    }else{
+                        tv.setText("Error: Light Sensor not found");
+                    }
+
                 }
             }
         });
